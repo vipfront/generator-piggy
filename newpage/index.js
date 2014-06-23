@@ -1,9 +1,11 @@
 'use strict';
 var util = require('util');
+var path = require('path');
 var yeoman = require('yeoman-generator');
+var yosay = require('yosay');
+var chalk = require('chalk');
 
-
-var NewpageGenerator = yeoman.generators.NamedBase.extend({
+var NewpageGenerator = yeoman.generators.Base.extend({
   init: function () {
     this.pkg = require('../package.json');
   },
