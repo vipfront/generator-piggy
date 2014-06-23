@@ -98,6 +98,7 @@ var PiggyGenerator = yeoman.generators.Base.extend({
     // template also handle srcPath and destPath template
     // template file don't need prefix underscore
     this.template('package.json', 'package.json');
+    this.template('Gruntfile.json', 'Gruntfile.js');
   },
 
   projectfiles: function () {
