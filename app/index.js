@@ -23,42 +23,43 @@ var PiggyGenerator = yeoman.generators.Base.extend({
     var done = this.async();
 
     // Have Yeoman greet the user.
-    this.log(yosay('Thank Yor For Using Piggy!'));
+    this.log(yosay('Happy Piggy!'));
 
     var prompts = [
         {
             type: 'input',
             name: 'projName',
-            message: 'What\'s your App\'s name?(' + utils.shinning('default [' + that.appname + ']') + ')',
+            message: 'Input your App\'s name. (' + utils.shinning('default [' + that.appname + ']') + ')',
             default: that.appname
         },
         {
             type: 'input',
             name: 'projVersion',
-            message: 'What\'s your App\'s version?(' + utils.shinning('default [1.0.0]') + ')',
+            message: 'Input your App\'s version. (' + utils.shinning('default [1.0.0]') + ')',
             default: '1.0.0'
         },
         {
             type: 'checkbox',
             name: 'projModules',
-            message: 'Please select your Piggy modules?(' + utils.shinning('use [SPACE] to check/uncheck') + ')',
+            message: 'Select your Piggy modules. (' + utils.shinning('use [SPACE] to check/uncheck') + ')',
             choices: [
-                {name: 'core', value: 'core', checked: true},
-                {name: 'process', value: 'module2'},
-                {name: 'util', value: 'module3'},
-                {name: 'net', value: 'module4'},
-            ],
+                // checked: true will check the choice
+                {name: 'core', value: 'core', disabled: true},
+                {name: 'process', value: 'process', checked: true},
+                {name: 'util', value: 'util'},
+                {name: 'net', value: 'net'},
+            ]
         },
         {
             type: 'confirm',
             name: 'projZepto',
-            message: 'Need Zepto?(' + utils.shinning('default [Yes]') + ')',
+            message: 'Include Zepto?(' + utils.shinning('default [Yes]') + ')',
             default: true
         },
         {
             type: 'confirm',
             name: 'projQW',
-            message: 'Need QW?(' + utils.shinning('default [Yes]') + ')',
+            message: 'Include QW?(' + utils.shinning('default [Yes]') + ')',
             default: true
         },
     ];
@@ -66,21 +67,37 @@ var PiggyGenerator = yeoman.generators.Base.extend({
     this.prompt(prompts, function (props) {
       this.projName = props.projName;
       this.projVersion = props.projVersion;
-      this.prpjZepto = props.projZepto;
+      this.projZepto = props.projZepto;
       this.projQW = props.projQW;
-      this.projModules = props.projModules;
+      // core is needed
+      // TODO: add dependencies support
+      this.projModules = ['core'].concat(props.projModules);
 
       done();
     }.bind(this));
   },
 
   app: function () {
-    this.mkdir('html');
-    this.mkdir('js');
-    this.mkdir('css');
-    this.mkdir('img');
+    var that = this;
+    this.directory('src');
+    this.mkdir('release');
 
-    this.template('_package.json', 'package.json');
+    if(this.projZepto) {
+        this.directory('_zepto', 'src/js/zepto');
+    }
+
+    if(this.projQW) {
+        this.directory('_qw', 'src/js/qw');
+    }
+
+    this.projModules.forEach(function(mod) {
+        that.copy('_piggy/' + mod + '.js', 'src/js/piggy/' + mod + '.js');
+    });
+
+    // copy also handle template
+    // template also handle srcPath and destPath template
+    // template file don't need prefix underscore
+    this.template('package.json', 'package.json');
   },
 
   projectfiles: function () {
