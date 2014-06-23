@@ -1,6 +1,6 @@
 'use strict';
 var util = require('util');
-var utils = require('./lib/utils');
+var utils = require('../lib/utils');
 var path = require('path');
 var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
