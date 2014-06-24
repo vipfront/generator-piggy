@@ -3,6 +3,10 @@
   "version": "<%= projVersion %>",
   "description": "App generate from Piggy",
   "repository": {},
-  "dependencies": {},
+  "dependencies": {
+    "findup-grunt-npmtasks": "^0.2.0"
+  },
+  "devDependencies": {
+  },
   "readme": "<%= projName %>"
 }
