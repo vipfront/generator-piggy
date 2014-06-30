@@ -17,6 +17,7 @@ var NewpageGenerator = yeoman.generators.Base.extend({
     // Have Yeoman greet the user.
     this.log(yosay('Happy Piggy!'));
 
+    // TODO: 询问新页面放到哪个模块下
     var prompts = [
         {
             type: 'input',
@@ -33,8 +34,8 @@ var NewpageGenerator = yeoman.generators.Base.extend({
   },
 
   files: function () {
-    this.template('_index.html', 'src/html/<%= pageName %>.html');
-    this.template('_index.js', 'src/js/<%= pageName %>.js');
+    this.template('_index.html', 'src/html/index/<%= pageName %>.html');
+    this.template('_index.js', 'src/js/index/<%= pageName %>.js');
   }
 });
 

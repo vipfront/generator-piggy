@@ -4,9 +4,10 @@
   "description": "App generate from Piggy",
   "repository": {},
   "dependencies": {
-    "findup-grunt-npmtasks": "^0.2.0"
   },
   "devDependencies": {
+    "findup-grunt-npmtasks": "^0.2.0",
+    "jshint-stylish": "^0.2.0"
   },
   "readme": "<%= projName %>"
 }

@@ -25,6 +25,7 @@ var PiggyGenerator = yeoman.generators.Base.extend({
     // Have Yeoman greet the user.
     this.log(yosay('Happy Piggy!'));
 
+    // TODO: qw、piggy可以选择公共离线版本还是独立版本
     var prompts = [
         {
             type: 'input',
