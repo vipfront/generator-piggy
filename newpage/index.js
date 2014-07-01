@@ -34,8 +34,8 @@ var NewpageGenerator = yeoman.generators.Base.extend({
   },
 
   files: function () {
-    this.template('_index.html', 'src/html/index/<%= pageName %>.html');
-    this.template('_index.js', 'src/js/index/<%= pageName %>.js');
+    this.template('_index.html', 'src/html/main/<%= pageName %>.html');
+    this.template('_index.js', 'src/js/main/<%= pageName %>.js');
   }
 });
 
