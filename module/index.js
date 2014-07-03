@@ -6,7 +6,7 @@ var yosay = require('yosay');
 var chalk = require('chalk');
 var utils = require('../lib/utils');
 
-var NewpageGenerator = yeoman.generators.Base.extend({
+var ModuleGenerator = yeoman.generators.Base.extend({
   init: function () {
     this.pkg = require('../package.json');
   },
@@ -24,30 +24,28 @@ var NewpageGenerator = yeoman.generators.Base.extend({
     var prompts = [
         {
             type: 'input',
-            name: 'pageName',
-            message: 'Input your Page\'s name.'
-        },
-        {
-            type: 'list',
             name: 'moduleName',
-            message: 'Which Sub-Module?',
-            choices: subModules
+            message: 'Input your Module\'s name.'
         }
     ];
 
     this.prompt(prompts, function (props) {
-      this.pageName = props.pageName;
-      // 直接返回的是数组中的值
       this.moduleName = props.moduleName;
+      // 判断module是否已经存在
+      if(~subModules.indexOf(this.moduleName)) {
+          this.log.error('The Module already exists.');
+      }
 
       done();
     }.bind(this));
   },
 
   files: function () {
-    this.template('_index.html', 'src/html/<%= moduleName %>/<%= pageName %>.html');
-    this.template('_index.js', 'src/js/<%= moduleName %>/<%= pageName %>.js');
+    this.mkdir('src/html/' + this.moduleName);
+    this.mkdir('src/js/page/' + this.moduleName);
+    this.mkdir('src/css/' + this.moduleName);
+    this.mkdir('src/img/' + this.moduleName);
   }
 });
 
-module.exports = NewpageGenerator;
+module.exports = ModuleGenerator;
