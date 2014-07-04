@@ -17,10 +17,16 @@ Finally, initiate the generator:
 $ yo piggy
 ```
 
-Also, you can initial a new page using:
+Also, you can initial a new module using:
 
 ```bash
-$ yo piggy:newpage
+$ yo piggy:module
+```
+
+And, you can initial a new page like this
+
+```bash
+$ yo piggy:page
 ```
 
 ### Getting To Know Yeoman
