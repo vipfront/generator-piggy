@@ -18,8 +18,6 @@ var ModuleGenerator = yeoman.generators.Base.extend({
     // Have Yeoman greet the user.
     this.log(yosay('Happy Piggy!'));
 
-    var subModules = utils.getSubModules();
-
     // 询问新页面放到哪个模块下
     var prompts = [
         {
@@ -31,6 +29,7 @@ var ModuleGenerator = yeoman.generators.Base.extend({
 
     this.prompt(prompts, function (props) {
       this.moduleName = props.moduleName;
+      var subModules = utils.getSubModules();
       // 判断module是否已经存在
       if(~subModules.indexOf(this.moduleName)) {
           this.log.error('The Module already exists.');
@@ -45,6 +44,7 @@ var ModuleGenerator = yeoman.generators.Base.extend({
     this.mkdir('src/js/page/' + this.moduleName);
     this.mkdir('src/css/' + this.moduleName);
     this.mkdir('src/img/' + this.moduleName);
+    this.log.ok('new module ' + this.moduleName + 'created');
   }
 });
 
