@@ -25,44 +25,36 @@ var PiggyGenerator = yeoman.generators.Base.extend({
     // Have Yeoman greet the user.
     this.log(yosay('Happy Piggy!'));
 
-    // TODO: qw、piggy可以选择公共离线版本还是独立版本
     var prompts = [
         {
             type: 'input',
             name: 'projName',
-            message: 'Input your App\'s name. (' + utils.shinning('default [' + that.appname + ']') + ')',
+            message: '请输入你的应用名称. (' + utils.shinning('默认 [' + that.appname + ']') + ')',
             default: that.appname
         },
         {
             type: 'input',
             name: 'projVersion',
-            message: 'Input your App\'s version. (' + utils.shinning('default [1.0.0]') + ')',
+            message: '请输入你的应用版本. (' + utils.shinning('默认 [1.0.0]') + ')',
             default: '1.0.0'
         },
-        {
-            type: 'checkbox',
-            name: 'projModules',
-            message: 'Select your Piggy modules. (' + utils.shinning('use [SPACE] to check/uncheck') + ')',
-            choices: [
-                // checked: true will check the choice
-                {name: 'core', value: 'core', disabled: true},
-                {name: 'process', value: 'process', checked: true},
-                {name: 'util', value: 'util'},
-                {name: 'net', value: 'net'},
-            ]
-        },
+
         {
             type: 'confirm',
             name: 'projZepto',
-            message: 'Include Zepto?(' + utils.shinning('default [Yes]') + ')',
+            message: '请选择是否包含Zepto? (' + utils.shinning('默认 [Yes]') + ')',
             default: true
         },
         {
-            type: 'confirm',
+            type: 'checkbox',
             name: 'projQW',
-            message: 'Include QW?(' + utils.shinning('default [Yes]') + ')',
-            default: true
-        },
+            message: '请选择你需要的QW库版本. (' + utils.shinning('默认 [离线版]') + ')',
+            choices: [
+                {name: '私有版', value: 'private'},
+                {name: '离线版', value: 'offline', checked: true},
+                {name: '不用了', value: 'none'}
+            ]
+        }
     ];
 
     this.prompt(prompts, function (props) {
@@ -70,12 +62,64 @@ var PiggyGenerator = yeoman.generators.Base.extend({
       this.projVersion = props.projVersion;
       this.projZepto = props.projZepto;
       this.projQW = props.projQW;
-      // core is needed
-      // TODO: add dependencies support
-      this.projModules = ['core'].concat(props.projModules);
 
       done();
     }.bind(this));
+  },
+
+  // 询问Piggy是在线版或离线版
+  askForPiggyEdition: function() {
+    var done = this.async();
+    var prompts = [
+        {
+            type: 'checkbox',
+            name: 'projPiggyVer',
+            message: '请选择你需要的Piggy版本. (' + utils.shinning('默认 [离线版]') + ')',
+            choices: [
+                {name: '私有版', value: 'private'},
+                {name: '离线版', value: 'offline', checked: true},
+                {name: '不用了', value: 'none'}
+            ]
+        },
+    ];
+
+    this.prompt(prompts, function (props) {
+      this.projPiggyVer = props.projPiggyVer;
+
+      done();
+    }.bind(this));
+  },
+
+  // 针对在线版Piggy，选择需要的模块
+  askForPiggyModule: function() {
+    var done = this.async();
+
+    if('private' == this.projPiggyVer) {
+        var prompts = [
+            // TODO:模块依赖处理
+            {
+                type: 'checkbox',
+                name: 'projModules',
+                message: '请选择你需要的Piggy模块. (' + utils.shinning('使用【空格键】选择') + ')',
+                choices: [
+                    // checked: true will check the choice
+                    {name: 'core', value: 'core', disabled: true},
+                    {name: 'process', value: 'process', checked: true},
+                    {name: 'util', value: 'util'},
+                    {name: 'net', value: 'net'},
+                ]
+            }
+        ];
+
+        this.prompt(prompts, function (props) {
+          this.projModules = ['core'].concat(props.projModules);
+
+          done();
+        }.bind(this));
+    } else {
+        this.projModules = false;
+        done();
+    }
   },
 
   globalNpmTaskPath: function() {
@@ -91,13 +135,15 @@ var PiggyGenerator = yeoman.generators.Base.extend({
         this.directory('_zepto', 'src/js/zepto');
     }
 
-    if(this.projQW) {
+    if('private' == this.projQW) {
         this.directory('_qw', 'src/js/qw');
     }
 
-    this.projModules.forEach(function(mod) {
-        that.copy('_piggy/' + mod + '.js', 'src/js/piggy/' + mod + '.js');
-    });
+    if('private' == this.projPiggyVer) {
+        this.projModules.forEach(function(mod) {
+            that.copy('_piggy/' + mod + '.js', 'src/js/piggy/' + mod + '.js');
+        });
+    }
 
     // copy also handle template
     // template also handle srcPath and destPath template
