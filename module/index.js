@@ -2,9 +2,9 @@
 var util = require('util');
 var path = require('path');
 var yeoman = require('yeoman-generator');
-var yosay = require('yosay');
 var chalk = require('chalk');
 var utils = require('../lib/utils');
+var say = require('../lib/say');
 
 var ModuleGenerator = yeoman.generators.Base.extend({
   init: function () {
@@ -16,7 +16,7 @@ var ModuleGenerator = yeoman.generators.Base.extend({
     var done = this.async();
 
     // Have Yeoman greet the user.
-    this.log(yosay('Happy Piggy!'));
+    this.log(say());
 
     // 询问新页面放到哪个模块下
     var prompts = [

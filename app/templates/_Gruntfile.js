@@ -3,12 +3,11 @@
  */
 var path = require('path');
 
-function getGlobalNpmTaskPath() {
-    return '<%= globalNpmTaskPath %>';
-}
-
 module.exports = function(grunt) {
-    require('findup-grunt-npmtasks')(grunt);
+    // 加载findup-grunt-npmtasks插件，实现插件共用
+    require('findup-grunt-npmtasks')(grunt, {
+        path: ['<%= globalNpmTaskPath %>']
+    });
 
     grunt.initConfig({
         // jshint
@@ -98,15 +97,18 @@ module.exports = function(grunt) {
                 src: ['release/html/**/*.html']
             }
         },
+        // 打离线包
         // 清除临时目录
         clean: {
-            all: {
+            pre: {
+                src: ['./_tmp*', 'release/']
+            },
+            post: {
                 src: ['./_tmp*']
             }
         }
     });
 
-    grunt.file.setBase(getGlobalNpmTaskPath());
     grunt.loadNpmTasks('grunt-cmd-transport');
     grunt.loadNpmTasks('grunt-cmd-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -117,13 +119,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-inline');
-    grunt.file.setBase(__dirname);
 
     // load you own npm tasks here
     //
     // grunt.loadNpmTasks('your-task');
 
-    grunt.registerTask('default', ['transport', 'cssmin', 'uglify', 'copy', 'inline', 'htmlhint', 'clean']);
+    grunt.registerTask('default', ['clean:pre', 'transport', 'cssmin', 'uglify', 'copy', 'inline', 'htmlhint', 'clean:post']);
     //grunt.registerTask('jshint', ['jshint']);
     grunt.registerTask('release', ['compress']);
 }

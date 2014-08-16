@@ -1,9 +1,8 @@
-'use strict';
 var util = require('util');
 var utils = require('../lib/utils');
+var say = require('../lib/say');
 var path = require('path');
 var yeoman = require('yeoman-generator');
-var yosay = require('yosay');
 var chalk = require('chalk');
 
 
@@ -23,7 +22,7 @@ var PiggyGenerator = yeoman.generators.Base.extend({
     var done = this.async();
 
     // Have Yeoman greet the user.
-    this.log(yosay('Happy Piggy!'));
+    this.log(say());
 
     var prompts = [
         {
@@ -36,10 +35,16 @@ var PiggyGenerator = yeoman.generators.Base.extend({
             type: 'input',
             name: 'projVersion',
             message: '请输入你的应用版本. (' + utils.shinning('默认 [1.0.0]') + ')',
-            default: '1.0.0'
+            default: '1.0.0',
+            validate: function(val) {
+                if(!/[0-9\.]+/.test(val)) {
+                    return '请输入正确的版本号';
+                }
+                return true;
+            }
         },
 
-        {
+        /*{
             type: 'confirm',
             name: 'projZepto',
             message: '请选择是否包含Zepto? (' + utils.shinning('默认 [Yes]') + ')',
@@ -54,7 +59,7 @@ var PiggyGenerator = yeoman.generators.Base.extend({
                 {name: '离线版', value: 'offline', checked: true},
                 {name: '不用了', value: 'none'}
             ]
-        }
+        }*/
     ];
 
     this.prompt(prompts, function (props) {
@@ -93,29 +98,49 @@ var PiggyGenerator = yeoman.generators.Base.extend({
   // 针对在线版Piggy，选择需要的模块
   askForPiggyModule: function() {
     var done = this.async();
+    var modules = [
+        // checked: true will check the choice
+        {name: 'core', value: 'core', disabled: true},
+        {name: 'process', value: 'process'},
+        {name: 'util', value: 'util', deps: ['process']},
+        {name: 'net', value: 'net', deps: ['util']},
+    ];
+
+    function getModules(selected) {
+        selected = selected || [];
+        var mods = [{name: 'core', value: 'core', disable: true}];
+        var checked = {};
+        selected.forEach(function(mod) {
+            checked[mod] = true;
+            var deps = [];
+        });
+        return mods;
+    }
 
     if('private' == this.projPiggyVer) {
-        var prompts = [
-            // TODO:模块依赖处理
-            {
-                type: 'checkbox',
-                name: 'projModules',
-                message: '请选择你需要的Piggy模块. (' + utils.shinning('使用【空格键】选择') + ')',
-                choices: [
-                    // checked: true will check the choice
-                    {name: 'core', value: 'core', disabled: true},
-                    {name: 'process', value: 'process', checked: true},
-                    {name: 'util', value: 'util'},
-                    {name: 'net', value: 'net'},
-                ]
-            }
-        ];
+        var that = this;
 
-        this.prompt(prompts, function (props) {
-          this.projModules = ['core'].concat(props.projModules);
+        function dep(currentVal) {
+            var prompts = [
+                {
+                    type: 'checkbox',
+                    name: 'projModules',
+                    message: '请选择你需要的Piggy模块. (' + utils.shinning('使用【空格键】选择') + ')',
+                    choices: getModules(currentVal),
+                    validate: function(val) {
+                        console.log(val);
+                        dep(val);
+                    }
+                }
+            ];
 
-          done();
-        }.bind(this));
+            that.prompt(prompts, function (props) {
+              that.projModules = ['core'].concat(props.projModules);
+
+              done();
+            });
+        }
+        dep();
     } else {
         this.projModules = false;
         done();
@@ -150,9 +175,6 @@ var PiggyGenerator = yeoman.generators.Base.extend({
     // template file don't need prefix underscore
     this.template('_package.json', 'package.json');
     this.template('_Gruntfile.js', 'Gruntfile.js');
-  },
-
-  projectfiles: function () {
   }
 });
 
