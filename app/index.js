@@ -74,6 +74,7 @@ var PiggyGenerator = yeoman.generators.Base.extend({
 
   // 询问Piggy是在线版或离线版
   askForPiggyEdition: function() {
+    return;
     var done = this.async();
     var prompts = [
         {
