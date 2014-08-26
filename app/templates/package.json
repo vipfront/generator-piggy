@@ -6,8 +6,7 @@
   "dependencies": {
   },
   "devDependencies": {
-    "findup-grunt-npmtasks": "^0.3.0",
-    "jshint-stylish": "^0.2.0"
+    "findup-grunt-npmtasks": "^0.3.0"
   },
   "readme": "<%= projName %>"
 }

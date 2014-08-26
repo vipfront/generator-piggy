@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>首页</title>
+        <link rel="stylesheet" href="../../css/global/global.css?__inline=true" />
+        <link rel="stylesheet" href="../../css/main/index.css?__inline=true" />
+    </head>
+    <body>
+        hello, world
+        <script src="../../js/package.js"></script>
+        <script src="../../js/page/global.js?__inline=true"></script>
+        <script src="../../js/page/main/index.js?__inline=true"></script>
+        <script>
+            seajs.use(['page/main/index'], function(index) {
+                index.foo();
+            });
+        </script>
+    </body>
+</html>

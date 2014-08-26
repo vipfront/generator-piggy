@@ -1,8 +1,6 @@
 /**
  *
  */
-var path = require('path');
-
 module.exports = function(grunt) {
     // 加载findup-grunt-npmtasks插件，实现插件共用
     require('findup-grunt-npmtasks')(grunt, {
@@ -13,7 +11,6 @@ module.exports = function(grunt) {
         // jshint
         jshint: {
             options: {
-                reporter: require('jshint-stylish'),
                 curly: true,
                 eqeqeq: true,
                 eqnull: true,
@@ -28,15 +25,26 @@ module.exports = function(grunt) {
             options: {
                 debug: false
             },
-            all: {
+            // 非页面相关的模块transport到临时目录
+            // sea.js不参与构建
+            // 整个项目除sea.js外，其他的js文件都必须有define调用
+            // 没有define调用的文件不会被transport
+            notpage: {
                 expand: true,
-                debug: false,
                 cwd: 'src/js/',
-                src: ['**/*.js', '!sea/*.js'],
-                dest: './_tmp1/js/'
+                src: ['**/*.js', '!lib/sea.js', '!page/**/*.js'],
+                dest: '_tmp/transport_notpage/'
+            },
+            // 页面相关的模块直接transport到临时目录
+            page: {
+                expand: true,
+                cwd: 'src/js/',
+                src: ['page/**/*.js'],
+                dest: '_tmp/transport_page/'
             }
         },
         // 压缩CSS
+        // 直接压到release目录
         cssmin: {
             css: {
                 expand: true,
@@ -50,29 +58,37 @@ module.exports = function(grunt) {
             seajs: {
                 expand: true,
                 cwd: 'src/js/',
-                src: ['sea/*.js'],
-                dest: 'release/js/'
+                src: ['lib/sea.js'],
+                dest: '_tmp/uglify_seajs/'
             },
-            js: {
+            notpage: {
                 expand: true,
-                cwd: './_tmp1/js/',
+                cwd: '_tmp/transport_notpage/',
+                src: ['**/*.js'],
+                dest: '_tmp/uglify_notpage/'
+            },
+            page: {
+                expand: true,
+                cwd: '_tmp/transport_page/',
                 src: ['**/*.js'],
                 dest: 'release/js/'
             }
         },
-        // 将html和图片拷贝到release目录
+        // 拼接代码
+        concat: {
+            js: {
+                src: ['_tmp/uglify_seajs/lib/sea.js', '_tmp/uglify_notpage/**/*.js'],
+                dest: 'release/js/package.js'
+            }
+        },
+        // 将除css、js外的其他目录都拷贝到release下
+        // 隐藏目录不会复制
         copy: {
-            html: {
+            all: {
                 expand: true,
-                cwd: 'src/html/',
-                src: ['**/*.html'],
-                dest: 'release/html/'
-            },
-            img: {
-                expand: true,
-                cwd: 'src/img/',
-                src: ['**/*.*'],
-                dest: 'release/img/'
+                cwd: 'src',
+                src: ['**/*.*', '!js/**/*.*', '!css/**/*.*'],
+                dest: 'release/'
             }
         },
         // inline处理
@@ -101,16 +117,16 @@ module.exports = function(grunt) {
         // 清除临时目录
         clean: {
             pre: {
-                src: ['./_tmp*', 'release/']
+                src: ['_tmp', 'release']
             },
             post: {
-                src: ['./_tmp*']
+                src: ['_tmp']
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-cmd-transport');
-    grunt.loadNpmTasks('grunt-cmd-concat');
+    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -124,7 +140,7 @@ module.exports = function(grunt) {
     //
     // grunt.loadNpmTasks('your-task');
 
-    grunt.registerTask('default', ['clean:pre', 'transport', 'cssmin', 'uglify', 'copy', 'inline', 'htmlhint', 'clean:post']);
+    grunt.registerTask('default', ['clean:pre', 'transport', 'cssmin', 'uglify', 'concat', 'copy', 'inline', 'htmlhint', 'clean:post']);
     //grunt.registerTask('jshint', ['jshint']);
     grunt.registerTask('release', ['compress']);
 }

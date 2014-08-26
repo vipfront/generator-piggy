@@ -149,7 +149,7 @@ var PiggyGenerator = yeoman.generators.Base.extend({
   },
 
   globalNpmTaskPath: function() {
-    this.globalNpmTaskPath = __dirname + '/../node_modules/';
+    this.globalNpmTaskPath = path.resolve(__dirname, '..', 'node_modules');
   },
 
   app: function () {
@@ -174,8 +174,8 @@ var PiggyGenerator = yeoman.generators.Base.extend({
     // copy also handle template
     // template also handle srcPath and destPath template
     // template file don't need prefix underscore
-    this.template('_package.json', 'package.json');
-    this.template('_Gruntfile.js', 'Gruntfile.js');
+    this.template('package.json', 'package.json');
+    this.template('Gruntfile.js', 'Gruntfile.js');
   }
 });
 

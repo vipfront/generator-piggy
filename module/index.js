@@ -33,6 +33,7 @@ var ModuleGenerator = yeoman.generators.Base.extend({
       // 判断module是否已经存在
       if(~subModules.indexOf(this.moduleName)) {
           this.log.error('The Module already exists.');
+          return;
       }
 
       done();
@@ -44,7 +45,7 @@ var ModuleGenerator = yeoman.generators.Base.extend({
     this.mkdir('src/js/page/' + this.moduleName);
     this.mkdir('src/css/' + this.moduleName);
     this.mkdir('src/img/' + this.moduleName);
-    this.log.ok('new module ' + this.moduleName + 'created');
+    this.log.ok('new module ' + this.moduleName + ' created');
   }
 });
 
