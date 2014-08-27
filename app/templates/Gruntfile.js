@@ -23,7 +23,8 @@ module.exports = function(grunt) {
         // 将普通模块翻译为CMD模块
         transport: {
             options: {
-                debug: false
+                debug: false,
+                paths: ['src/js/']
             },
             // 非页面相关的模块transport到临时目录
             // sea.js不参与构建
