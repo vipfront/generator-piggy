@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>首页</title>
+        <meta charset="utf-8">
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <link rel="stylesheet" href="../../css/global/global.css?__inline=true" />
         <link rel="stylesheet" href="../../css/main/index.css?__inline=true" />
+        <!--加入你的css，带__inline=true标识会打到页面上-->
+        <script src="../../js/page/global.js?__inline=true"></script>
+        <title>首页</title>
     </head>
     <body>
         hello, world
+        <!--seajs,zeptojs,badjs,qqapi,fastclick-->
         <script src="../../js/package.js"></script>
-        <script src="../../js/page/global.js?__inline=true"></script>
+
+        <!--加入你的js，带__inline=true标识会打到页面上-->
         <script src="../../js/page/main/index.js?__inline=true"></script>
         <script>
-            seajs.use(['page/main/index'], function(index) {
-                index.foo();
+            seajs.use(['business/router'], function(router) {
+                router.ready(function(params, index) {
+                    index.foo();
+                }, 'page/main/index.js');
             });
         </script>
     </body>

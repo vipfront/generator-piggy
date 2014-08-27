@@ -77,7 +77,7 @@ module.exports = function(grunt) {
         // 拼接代码
         concat: {
             js: {
-                src: ['_tmp/uglify_seajs/lib/sea.js', '_tmp/uglify_notpage/**/*.js'],
+                src: ['_tmp/uglify_seajs/lib/sea.js', '_tmp/uglify_notpage/**/*.js', '!_tmp/uglify_notpage/*.js', '_tmp/uglify_notpage/package.init.js'],
                 dest: 'release/js/package.js'
             }
         },
